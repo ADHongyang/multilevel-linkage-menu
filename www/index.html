@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>多级联动</title>
+		<style>
+			body {
+				text-align: center;
+			}
+			
+			main {
+				display: inline-block;
+				width: 800px;
+				height: 500px;
+				background-color: gainsboro;
+				margin: 100px;
+			}
+			
+			#fle {
+				display: none;
+				flex-wrap: wrap;
+				background-color: white;
+				/*height: 300px;*/
+			}
+			
+			div {
+				cursor: pointer;
+				margin-top: 20px;
+				width: 100px;
+				height: 20px;
+				color: blue;
+				margin-bottom: 20px;
+			}
+			
+			#cho1,
+			#cho2 {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<main>
+			<section>
+				<button id="cho">请选择</button>
+				<button id="cho1"></button>
+				<button id="cho2"></button>
+			</section>
+			<section id="fle"></section>
+
+			<section id="fle2"></section>
+
+			<script src="jquery.js"></script>
+
+			<script>
+				var swit = true;
+
+				//请选择按钮的点击事件
+				$('#cho').click(function() {
+					var sheng = "address";
+
+					$('#cho1,#cho2').css('display', 'none')
+						//只相服务器端获取一次数据
+					$.post('/sheng', {
+						sheng
+					}, function(data) {
+						console.dir(data)
+						if (swit) {
+							$('#fle').empty()
+							$('#fle').css('display', 'none')
+							for (var a in data) {
+								$('<div><div>').css({
+									width: '100px',
+									height: '20px',
+									color: 'blue'
+								}).text(a).appendTo($('#fle'))
+
+							}
+							
+							$('#fle').slideDown(100, 'linear')
+                            $('#fle').css('display', 'flex')
+							swit = false
+						}
+
+						//给省份添加点击事件
+						$('div').click(function() {
+
+							$('#fle').empty()
+							$('#cho1').text($(this).text()).css('display', 'inline-block')
+
+							$('#cho1').click(function() {
+								$('#cho2').css('display', 'none')
+								$('#fle').empty()
+								$('#fle').css('display', 'none')
+								console.log($(this).text()+'测试')
+								for (var a in data[$(this).text()]) {
+									$('<div><div>').css({
+										width: '100px',
+										height: '20px',
+										color: 'blue'
+									}).text(a).appendTo($('#fle'))
+								}
+
+								$('#fle').slideDown(100, 'linear').css('display', 'flex')
+								swit = true
+//                             show2()
+									//添加点击事件
+								show()
+							})
+
+							$('#fle').css('display', 'none')
+							console.log($(this).text())
+							for (var a in data[$(this).text()]) {
+								$('<div><div>').css({
+									width: '100px',
+									height: '20px',
+									color: 'blue'
+								}).text(a).appendTo($('#fle'))
+							}
+
+							$('#fle').slideDown(100, 'linear').css('display', 'flex')
+							swit = true
+
+							//添加点击事件
+							show()
+							console.log('呵呵呵' + this)
+						})
+						
+						var show2=function(){
+							for (var a in data[$(this).text()]) {
+									$('<div><div>').css({
+										width: '100px',
+										height: '20px',
+										color: 'blue'
+									}).text(a).appendTo($('#fle'))
+								}
+                                console.log('洪样')
+								$('#fle').slideDown(100, 'linear').css('display', 'flex')
+								swit = true
+						}
+
+						//点击的事件方法,上面的市和区的点击事件有引用
+						var show = function() {
+							$('div').click(function() {
+								console.log('哈哈哈')
+								$('#fle').empty()
+								$('#fle').css('display', 'none')
+								console.log(this)
+								var aa = data[$('#cho1').text()][$(this).text()]
+								for (var a in aa) {
+									$('<div><div>').css({
+										width: '100px',
+										height: '20px',
+										color: 'blue'
+									}).text(aa[a]).appendTo($('#fle'))
+								}
+								$('#fle').slideDown(100, 'linear').css('display', 'flex')
+								$('#cho2').text($(this).text()).css('display', 'inline-block').click(function() {
+
+									$('#fle').css('display', 'none')
+
+									$('#fle').slideDown(100, 'linear').css('display', 'flex')
+
+								})
+
+							})
+						}
+
+					})
+
+				})
+			</script>
+		</main>
+	</body>
+
+</html>
